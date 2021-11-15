@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="center">
+    <h2>Des virements automatiques pour la Ğ1 !</h2>
+    <div class="paragraph">
+        <p>Ğ1Cotis est un système de cotisations volontaires en monnaie libre.</p>
+        <p>Lors de vos transactions, donnez une adresse publique intermédiaire. Chaque jour, le script Ğ1Cotis va :
+        <ul>
+            <li> regarder s'il y a de la monnaie sur ce compte,
+            <li> verser un certain pourcentage sur des comptes que vous aurez choisi,
+            <li> et envoyer le reste sur votre compte portefeuille personnel.
+        </ul>
+        Ğ1Cotis gère aussi des virements automatiques de montant fixe, envoyés à intervalle régulier.
+        Il peut être installé sur votre serveur.
+        Vous pouvez utiliser Ğ1cotis pour votre usage personnel, ou proposer à d'autres personnes de créer des comptes
+        automatisés sur votre instance.
+        <p>
+    </div>
+</div>
+{% endblock %}

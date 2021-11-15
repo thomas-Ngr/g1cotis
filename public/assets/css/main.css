@@ -1,0 +1,49 @@
+* {
+    box-sizing: border-box;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100.1%;
+    background-color: aliceblue;
+}
+
+/*
+ * All is organized inside HEADER, MAIN and FOOTER,
+ * Which are aligned in column.
+ */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+main {
+    flex-grow: 1;
+    width: 60%;
+    min-width : 350px;
+    padding : 30px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* HEADER */
+
+header {
+    height: 50px;
+    width: 100%;
+    padding: 0 50px 0 50px;
+    background-color: lightblue;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header nav {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
