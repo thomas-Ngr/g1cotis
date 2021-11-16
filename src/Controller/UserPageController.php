@@ -22,7 +22,7 @@ class UserPageController extends AbstractController
             return $this->render('security/login.html.twig', ['last_username' => '', 'error' => $error]);
         }
 
-        $user = $security->getUser();
+        $user = $security->getUser(); // do this before redirection
         //dump($user); die();
 
         if ($user) {
