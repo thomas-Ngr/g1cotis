@@ -60,9 +60,11 @@ form {
     align-items: center;
 }
 .form_row {
-    width: 100%;
+    width: 60%;
 }
 .form_row  > div{
     display: flex;
     gap: 15px;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
