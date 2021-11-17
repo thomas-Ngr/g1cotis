@@ -15,7 +15,6 @@
 <table>
     <thead>
         <tr>
-            <td>N°</td>
             <td>Address</td>
             <td>Percent</td>
             <td>Actions</td>
@@ -24,7 +23,6 @@
     <tbody>
         {% for dispatchRecipient in form.dispatchRecipients %}
         <tr>
-            <td>{{ form_label(dispatchRecipient) }}</td>
             <td>{{ form_widget(dispatchRecipient.address) }}</td>
             <td>{{ form_widget(dispatchRecipient.percent) }}</td>
             <td>

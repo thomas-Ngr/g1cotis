@@ -48,7 +48,7 @@ function add_line_to_form(table_body) {
 }
 
 function getFormRowNumber(form_row) {
-    let inputID = form_row.children[2].firstChild.id;
+    let inputID = form_row.children[1].firstChild.id;
     let form_row_number = inputID.split('_').at(-2);
     return Number(form_row_number);
 }
@@ -57,13 +57,17 @@ function create_empty_row(line_number, model_row) {
 
     let new_row = model_row.cloneNode(true);
     let model_number = getFormRowNumber(model_row);
-    let new_row_cells = new_row.children;
+    let new_row_cells = Array.from(new_row.children);
 
-    new_row_cells[0].innerText = line_number;
+    replaceIdNumber(new_row_cells[0].firstChild, model_number, line_number);
     replaceIdNumber(new_row_cells[1].firstChild, model_number, line_number);
-    replaceIdNumber(new_row_cells[2].firstChild, model_number, line_number);
+    replaceNameNumber(new_row_cells[0].firstChild, model_number, line_number);
     replaceNameNumber(new_row_cells[1].firstChild, model_number, line_number);
-    replaceNameNumber(new_row_cells[2].firstChild, model_number, line_number);
+
+    // remove values or enter default ones
+    new_row_cells.map(cell => {
+        cell.firstChild.value = "";
+    });
 
     return new_row;
 }
@@ -78,7 +82,25 @@ function replaceNameNumber(input, model_number, line_number) {
     input.name = name.replace(model_number, line_number)
 }
 
-// TODO
+// Delete row
 function delete_row(event) {
-    console.log(event);
+    let row = event.target.parentNode.parentNode;
+    let row_position = getFormRowNumber(row);
+
+    // abort if it is the only row
+    if ( row.nextElementSibling === null && row.previousElementSibling === null ) {
+        return;
+    }
+    row.remove();
+    
+    // decrement each following rows index
+    let other_rows = Array.from(document.getElementsByTagName("tbody")[0].children);
+    let following_rows = other_rows.slice(row_position);
+    following_rows.map(each_row => {
+        each_row_number = getFormRowNumber(each_row);
+        replaceIdNumber(each_row.children[0].firstChild, each_row_number, each_row_number - 1);
+        replaceIdNumber(each_row.children[1].firstChild, each_row_number, each_row_number - 1);
+        replaceNameNumber(each_row.children[0].firstChild, each_row_number, each_row_number - 1);
+        replaceNameNumber(each_row.children[1].firstChild, each_row_number, each_row_number - 1);
+    });
 }
