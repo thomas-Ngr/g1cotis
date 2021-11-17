@@ -2,6 +2,42 @@
 
 {% block body %}
 
-{{ form(form) }}
+{{ form_start(form) }}
+
+<div class="form_row">
+{{ form_row(form.title, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+<div class="form_row">
+{{ form_row(form.address, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <td>N°</td>
+            <td>Address</td>
+            <td>Percent</td>
+            <td>Actions</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dispatchRecipient in form.dispatchRecipients %}
+        <tr>
+            <td>{{ form_label(dispatchRecipient) }}</td>
+            <td>{{ form_widget(dispatchRecipient.address) }}</td>
+            <td>{{ form_widget(dispatchRecipient.percent) }}</td>
+            <td>(Actions)</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+{{ form_end(form) }}
+
+<button id="add_line">( + ) Line</button>
+<script src="/assets/js/form.js"></script>
 
 {% endblock %}
