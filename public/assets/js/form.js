@@ -8,19 +8,30 @@
  * EVENT LISTENERS
  */
 
-let button_add_line = document.getElementById('add_line');
-button_add_line.addEventListener("click", (event) => {event.preventDefault();});
-button_add_line.addEventListener("click", create_new_line); // éviter le comportement par défaut (?) de rechargement
+let button_add_row = document.getElementById('add_row');
+button_add_row.addEventListener("click", (event) => {event.preventDefault();});
+button_add_row.addEventListener("click", create_new_line); // éviter le comportement par défaut (?) de rechargement
+
+button_delete_row_event_listener();
 
 /*
  * FUNCTIONS
  */
+
+function button_delete_row_event_listener() {
+    let buttons_del_row = Array.from(document.getElementsByClassName('del_row'));
+    buttons_del_row.map( button => {
+        button.addEventListener("click", (event) => {event.preventDefault();});
+        button.addEventListener("click", delete_row);
+    });
+}
 
 // we may allow the user to remove a line from the form.
 
 function create_new_line() {
     let table_body = document.getElementsByTagName("tbody")[0];
     add_line_to_form( table_body );
+    button_delete_row_event_listener();
 }
 
 function add_line_to_form(table_body) {
@@ -65,4 +76,9 @@ function replaceIdNumber(input, model_number, line_number) {
 function replaceNameNumber(input, model_number, line_number) {
     let name = input.name;
     input.name = name.replace(model_number, line_number)
+}
+
+// TODO
+function delete_row(event) {
+    console.log(event);
 }

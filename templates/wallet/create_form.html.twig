@@ -27,17 +27,19 @@
             <td>{{ form_label(dispatchRecipient) }}</td>
             <td>{{ form_widget(dispatchRecipient.address) }}</td>
             <td>{{ form_widget(dispatchRecipient.percent) }}</td>
-            <td>(Actions)</td>
+            <td>
+                <button class="del_row" novalidate>Suppr.</button>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-
+<button id="add_row" novalidate>( + ) Line</button>
 
 {{ form_end(form) }}
 
-<button id="add_line">( + ) Line</button>
+
 <script src="/assets/js/form.js"></script>
 
 {% endblock %}
