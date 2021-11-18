@@ -98,6 +98,7 @@ class WalletController extends AbstractController
         }
         $form = $this->createForm(CreateWalletType::class, $wallet);
         $wallet->setType(Wallet::$TYPE_SPREAD);
+        $wallet->setState(Wallet::$STATE_ACTIVE);
         $wallet->setUser($user);
 
         return $form;
