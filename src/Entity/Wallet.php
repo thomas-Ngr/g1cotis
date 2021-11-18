@@ -41,7 +41,6 @@ class Wallet
      * @ORM\Column(type="string", length=48, nullable=true)
      * 
      * // can be blank because we create the wallet before deriving the pubkey.
-     * 
      * @CustomAssert\PublicKey
      * 
      */
@@ -80,6 +79,7 @@ class Wallet
      *     @Assert\NotBlank,
      *     @Assert\Type("App\Entity\DispatchRecipient")
      * })
+     * @CustomAssert\PercentSum
      */
     private $dispatchRecipients;
 

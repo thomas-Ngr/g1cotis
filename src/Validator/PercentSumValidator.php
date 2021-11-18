@@ -21,7 +21,7 @@ class PercentSumValidator extends ConstraintValidator
             $sum += $recipient->getPercent();
         }
 
-        if ( $sum > 100 ) {
+        if ( $sum > 1 ) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ sum }}', $sum)
                 ->addViolation();

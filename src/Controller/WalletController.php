@@ -82,7 +82,9 @@ class WalletController extends AbstractController
             return $this->redirect('/user'); // replace by wallet view ?
         }
 
-        return $this->redirect('/user/wallet/create');
+        return $this->render('wallet/create_form.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     /**
