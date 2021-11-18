@@ -29,7 +29,7 @@ class DispatchRecipient
     private $address;
 
     /**
-     * @ORM\Column(type="smallint", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      * 
      * @Assert\NotBlank
      * @CustomAssert\Percent
@@ -63,15 +63,15 @@ class DispatchRecipient
         return $this;
     }
 
-    public function getPercent(): ?int
+    public function getPercent(): ?float
     {
         return $this->percent;
     }
 
-    public function setPercent(?int $percent): self
+    //public function setPercent(?int $percent): self
+    public function setPercent(float $percent): self
     {
         $this->percent = $percent;
-
         return $this;
     }
 

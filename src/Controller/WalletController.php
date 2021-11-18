@@ -28,7 +28,6 @@ class WalletController extends AbstractController
      */
     public function create(Request $request, Security $security, ValidatorInterface $validator): Response
     {
-        
         /* REJECT USERS NOT LOGGED IN */
         if ($this->isGranted('ROLE_USER') == false) {
             $error = new AuthenticationCredentialsNotFoundException(); // I would like to add a custom message...
@@ -60,41 +59,17 @@ class WalletController extends AbstractController
             $wallet->getDispatchRecipients()->add($recipient);
         }
         $form = $this->createForm(CreateWalletType::class, $wallet);
+        $wallet->setType(1);
+        $wallet->setUser($user);
         $form->handleRequest($request);
-     
+
         /* MANAGE POST REQUESTS */
-        if ($form->isSubmitted()) {
-
-            $wallet->setType(1);
-            $wallet->setUser($user);
-
-            // Validate wallet
-            $errors = $validator->validate($wallet);
-            if (count($errors) > 0) {
-                /*
-                 * Uses a __toString method on the $errors variable which is a
-                 * ConstraintViolationList object. This gives us a nice string
-                 * for debugging.
-                 */
-
-                 // TODO return a form with a warning about the wrong value.
-                $errorsString = (string) $errors;
-        
-                return new Response($errorsString);
-            }
+        if ($form->isSubmitted() && $form->isvalid()) {
 
             // Save
             $em = $this->getDoctrine()->getManager();
             // persist each recipient
             foreach($wallet->getDispatchRecipients() as $recipient) {
-                // Validate recipient
-                $errors = $validator->validate($recipient);
-                if (count($errors) > 0) {
-                    // TODO return a form with a warning about the wrong value.
-                    $errorsString = (string) $errors;
-            
-                    return new Response($errorsString);
-                }
                 $em->persist($recipient);
             }
             $em->persist($wallet);

@@ -23,7 +23,7 @@ class PercentValidator extends ConstraintValidator
             throw new UnexpectedValueException($percent, 'int');
         }
 
-        if ( $percent > 100 || $percent <= 0 ) {
+        if ( $percent > 1 || $percent <= 0 ) {
             // the argument must be a string or an object implementing __toString()
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ percent }}', $percent)
