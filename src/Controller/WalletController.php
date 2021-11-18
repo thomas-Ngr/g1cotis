@@ -13,6 +13,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
 
 use App\Entity\Wallet;
+use App\Entity\User;
 use App\Entity\DispatchRecipient;
 use App\Form\CreateWalletType;
 
@@ -24,7 +25,7 @@ use App\Form\CreateWalletType;
 class WalletController extends AbstractController
 {
     /**
-     * @Route("/create", name="create_wallet", methods={"POST"})
+     * @Route("/create", name="create_wallet")
      */
     public function create(Request $request, Security $security, ValidatorInterface $validator): Response
     {
@@ -35,38 +36,22 @@ class WalletController extends AbstractController
         }
 
         /* BUILD WALLET DATA */
-        $user = $security->getUser();
         $wallet = new Wallet();
 
-        // get request content and create as much wallet recipients as sent by the user.
-        try {
-            $form_recipients = $request->request->get('create_wallet')['dispatchRecipients'];
-        } catch (Error $e) {
-            $error = new BadRequestHttpException('Wallet creation request is not correctly formatted');; // I would like to add a custom message...
-            return $this->render('wallet/create_form.html.twig', ['error' => $error]);
+        switch ($request->getMethod()) {
+            case "POST":
+                $user = $security->getUser();
+                $form = self::handlePostForm($request, $wallet, $user);
+                break;
+            default:
+                $form = self::createEmptyForm($wallet);
+                break;
         }
-        
-        // create empty form according to request and fill wallet accordingly
-        for ($i = 0 ; $i < count($form_recipients) ; $i++) {
-            // verify values are set
-            if (empty($form_recipients[$i]['address']) || empty($form_recipients[$i]['percent'] )) {
-                $error = new BadRequestHttpException('Wallet creation request is not correctly formatted');; // I would like to add a custom message...
-                return $this->render('wallet/create_form.html.twig', ['error' => $error]);
-            }
 
-            $recipient = new DispatchRecipient();
-            $recipient->setWallet($wallet);
-            $wallet->getDispatchRecipients()->add($recipient);
-        }
-        $form = $this->createForm(CreateWalletType::class, $wallet);
-        $wallet->setType(1);
-        $wallet->setUser($user);
-        $form->handleRequest($request);
+        $form->handleRequest($request, $wallet);
 
-        /* MANAGE POST REQUESTS */
+        /* SAVE VALID FORMS */
         if ($form->isSubmitted() && $form->isvalid()) {
-
-            // Save
             $em = $this->getDoctrine()->getManager();
             // persist each recipient
             foreach($wallet->getDispatchRecipients() as $recipient) {
@@ -87,35 +72,42 @@ class WalletController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/create", name="create_wallet_form", methods={"GET","HEAD"})
-     */
-    public function displayForm(Request $request, Security $security): Response
-    {
+    private function handlePostForm(Request $request, Wallet $wallet, User $user) {
 
-        /* REJECT USERS NOT LOGGED IN */    
-        if ($this->isGranted('ROLE_USER') == false) {
-            $error = new AuthenticationCredentialsNotFoundException(); // I would like to add a custom message...
-            return $this->render('security/login.html.twig', ['last_username' => '', 'error' => $error]);
+        // get request content.
+        try {
+            $form_recipients = $request->request->get('create_wallet')['dispatchRecipients'];
+        } catch (Error $e) {
+            $error = new BadRequestHttpException('Wallet creation request is not correctly formatted');; // I would like to add a custom message...
+            return $this->render('wallet/create_form.html.twig', ['error' => $error]);
         }
 
-        /* BUILD FORM DATA */
-        $user = $security->getUser();
-        $wallet = new Wallet();
+        // create empty form according to request and fill wallet accordingly
+        for ($i = 0 ; $i < count($form_recipients) ; $i++) {
+            // verify values are set
+            if (empty($form_recipients[$i]['address']) || empty($form_recipients[$i]['percent'] )) {
+                $error = new BadRequestHttpException('Wallet creation request is not correctly formatted');; // I would like to add a custom message...
+                return $this->render('wallet/create_form.html.twig', ['error' => $error]);
+            }
 
+            $recipient = new DispatchRecipient();
+            $recipient->setWallet($wallet);
+            $wallet->getDispatchRecipients()->add($recipient);
+        }
+        $form = $this->createForm(CreateWalletType::class, $wallet);
+        $wallet->setType(1);
+        $wallet->setUser($user);
+
+        return $form;
+    }
+
+    private function createEmptyForm(Wallet $wallet) {
         $recipient = new DispatchRecipient();
         $recipient->setWallet($wallet);
         $wallet->getDispatchRecipients()->add($recipient);
 
-        $form = $this->createForm(CreateWalletType::class, $wallet);
-
-        /* DISPLAY FORM */
-        return $this->render('wallet/create_form.html.twig', [
-            'controller_name' => 'Create wallet',
-            'form' => $form->createView(),
-        ]);
+        return $this->createForm(CreateWalletType::class, $wallet);
     }
-
 
     /**
      * @Route("/{id}", name="view_account")
