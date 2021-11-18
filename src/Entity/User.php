@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as CustomAssert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -25,6 +26,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *      min = 1,
+     *      max = 180,
+     *      minMessage = "Username must be at least {{ limit }} characters long",
+     *      maxMessage = "Username cannot be longer than {{ limit }} characters"
+     * )
      */
     private $username;
 
@@ -47,11 +55,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Wallet::class, mappedBy="user")
+     * 
+     * @Assert\All({
+     *     @Assert\NotBlank,
+     *     @Assert\Type("App\Entity\Wallet")
+     * })
      */
     private $wallets;
 
     /**
      * @ORM\Column(type="string", length=48, nullable=true)
+     * 
+     * // can be blank because we create the wallet before deriving the pubkey.
+     * @CustomAssert\PublicKey
      */
     private $address;
 
