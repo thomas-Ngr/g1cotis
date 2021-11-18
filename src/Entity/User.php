@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as CustomAssert;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -189,6 +190,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getSingleWallet($id): Wallet
+    {
+        foreach($this->getWallets() as $wallet) {
+            if ($wallet->getID() === $id) {
+                return $wallet;
+            }
+        }
+        throw new ResourceNotFoundException();
     }
 
     public function removeWallet(Wallet $wallet): self

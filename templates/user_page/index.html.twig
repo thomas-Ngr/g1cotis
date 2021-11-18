@@ -17,7 +17,7 @@
     <tbody>
         {% for wallet in wallets %}
         <tr>
-            <td><a href="">{{ wallet.title }}</a></td>
+            <td><a href="/user/wallet/{{ wallet.id }}">{{ wallet.title }}</a></td>
             <td>{{ wallet.address }}</td>
             <td>{{ wallet.lastDone }}</td>
         </tr>

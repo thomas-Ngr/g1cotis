@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Security;
 
 use App\Entity\Wallet;
@@ -110,12 +111,28 @@ class WalletController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="view_account")
+     * @Route("/{id}", name="view_wallet", methods={"GET"})
      */
-    public function show(): Response
+    public function show(int $id, Security $security): Response
     {
-        return $this->render('account/index.html.twig', [
-            'controller_name' => 'AccountController',
+        /* REJECT USERS NOT LOGGED IN */
+        if ($this->isGranted('ROLE_USER') == false) {
+            $error = new AuthenticationCredentialsNotFoundException(); // I would like to add a custom message...
+            return $this->render('security/login.html.twig', ['last_username' => '', 'error' => $error]);
+        }
+
+        /* THIS WALLET BELONGS TO THE CURRENT USER */
+        $user = $security->getUser();
+        try {
+            $wallet = $user->getSingleWallet($id);
+        } catch (Exception $e) {
+            $error = new AccessDeniedException(); // I would like to add a custom message...
+            return $this->render('security/login.html.twig', ['last_username' => '', 'error' => $error]);
+        }
+
+        /* DISPLAY WALLET PAGE */
+        return $this->render('wallet/show.html.twig', [
+            'wallet' => $wallet,
         ]);
     }
 }

@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<h2>Wallet {{wallet.title}}</h2>
+<p>{{ wallet.address }}</p>
+
+<table>
+    <thead>
+        <tr>
+            <td>Address</td>
+            <td>Percent</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dispatchRecipient in wallet.dispatchRecipients %}
+        <tr>
+            <td>{{ dispatchRecipient.address }}</td>
+            <td>{{ dispatchRecipient.percent }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div>
+    <button action="\user\wallet\{id}\update">Modifier</button>
+    <button action="\user\wallet\{id}\delete">Supprimer</button>
+</div>
+
+{% endblock %}
