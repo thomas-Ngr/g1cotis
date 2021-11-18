@@ -28,10 +28,8 @@ class UserPageController extends AbstractController
         if ($user) {
             return $this->render('user_page/index.html.twig', [
                 'username' => $user->getUsername(),
-                'email' => $user->getEmail()
-                // TODO pass user accounts
-
-                // should I pass whole user entity ?
+                'email' => $user->getEmail(),
+                'wallets' => $user->getWallets()
             ]);
         }
         

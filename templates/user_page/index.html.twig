@@ -6,4 +6,23 @@
 <p>email : {{ email }} </p>
 <a href="/user/wallet/create">Create a new wallet</a>
 
+<table>
+    <thead>
+        <tr>
+            <td>Label</td>
+            <td>Address</td>
+            <td>Processed on</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for wallet in wallets %}
+        <tr>
+            <td><a href="">{{ wallet.title }}</a></td>
+            <td>{{ wallet.address }}</td>
+            <td>{{ wallet.lastDone }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}
