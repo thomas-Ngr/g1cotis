@@ -5,6 +5,9 @@ namespace App\Entity;
 use App\Repository\DispatchRecipientRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as CustomAssert;
+
 /**
  * @ORM\Entity(repositoryClass=DispatchRecipientRepository::class)
  */
@@ -19,17 +22,27 @@ class DispatchRecipient
 
     /**
      * @ORM\Column(type="string", length=48)
+     * 
+     * @Assert\NotBlank
+     * @CustomAssert\PublicKey
      */
     private $address;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
+     * 
+     * @Assert\NotBlank
+     * @CustomAssert\Percent
      */
     private $percent;
 
     /**
      * @ORM\ManyToOne(targetEntity=Wallet::class, inversedBy="dispatchRecipients")
      * @ORM\JoinColumn(nullable=false)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Type("App\Entity\Wallet")
+     * 
      */
     private $wallet;
 

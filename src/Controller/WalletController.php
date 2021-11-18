@@ -87,6 +87,14 @@ class WalletController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             // persist each recipient
             foreach($wallet->getDispatchRecipients() as $recipient) {
+                // Validate recipient
+                $errors = $validator->validate($recipient);
+                if (count($errors) > 0) {
+                    // TODO return a form with a warning about the wrong value.
+                    $errorsString = (string) $errors;
+            
+                    return new Response($errorsString);
+                }
                 $em->persist($recipient);
             }
             $em->persist($wallet);
