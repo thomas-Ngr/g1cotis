@@ -16,6 +16,14 @@ use App\Validator as CustomAssert;
  */
 class Wallet
 {
+
+    public static $STATE_REMOVED = 0;
+    public static $STATE_TO_REMOVE = 1;
+    public static $STATE_ACTIVE = 2;
+
+    public static $TYPE_SPREAD = 1;
+    public static $TYPE_REGULAR = 2;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -82,6 +90,11 @@ class Wallet
      * @CustomAssert\PercentSum
      */
     private $dispatchRecipients;
+
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $state;
 
     public function __construct()
     {
@@ -191,6 +204,18 @@ class Wallet
                 $dispatchRecipient->setWallet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getState(): ?int
+    {
+        return $this->state;
+    }
+
+    public function setState(int $state): self
+    {
+        $this->state = $state;
 
         return $this;
     }

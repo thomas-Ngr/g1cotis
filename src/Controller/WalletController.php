@@ -25,6 +25,7 @@ use App\Form\CreateWalletType;
  */
 class WalletController extends AbstractController
 {
+
     /**
      * @Route("/create", name="create_wallet")
      */
@@ -96,7 +97,7 @@ class WalletController extends AbstractController
             $wallet->getDispatchRecipients()->add($recipient);
         }
         $form = $this->createForm(CreateWalletType::class, $wallet);
-        $wallet->setType(1);
+        $wallet->setType(Wallet::$TYPE_SPREAD);
         $wallet->setUser($user);
 
         return $form;
@@ -135,4 +136,38 @@ class WalletController extends AbstractController
             'wallet' => $wallet,
         ]);
     }
+
+    /**
+     * @Route("/{id}/delete", name="delete_wallet", methods={"GET"})
+     */
+    public function delete(int $id, Security $security): Response
+    {
+        /* REJECT USERS NOT LOGGED IN */
+        if ($this->isGranted('ROLE_USER') == false) {
+            $error = new AuthenticationCredentialsNotFoundException(); // I would like to add a custom message...
+            return $this->render('security/login.html.twig', ['last_username' => '', 'error' => $error]);
+        }
+
+        /* THIS WALLET BELONGS TO THE CURRENT USER */
+        $user = $security->getUser();
+        try {
+            $wallet = $user->getSingleWallet($id);
+        } catch (Exception $e) {
+            $error = new AccessDeniedException(); // I would like to add a custom message...
+            return $this->render('security/login.html.twig', ['last_username' => '', 'error' => $error]);
+        }
+
+        /* MARK WALLET TO BE REMOVED */
+        // Blockchain backend will refund the user before removing it.
+        $wallet->setState(Wallet::$STATE_TO_REMOVE);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($wallet);
+        $em->flush();
+
+        /* DISPLAY WALLET PAGE */
+        return $this->render('wallet/show.html.twig', [
+            'wallet' => $wallet,
+        ]);
+    }
+
 }
