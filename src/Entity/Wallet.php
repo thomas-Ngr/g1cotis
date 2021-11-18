@@ -3,9 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\WalletRepository;
+use App\Entity\DispatchRecipient;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=WalletRepository::class)
@@ -21,11 +24,25 @@ class Wallet
 
     /**
      * @ORM\Column(type="string", length=50)
+     * 
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     * @Assert\Length(
+     *      min = 1,
+     *      max = 50,
+     *      minMessage = "Wallet title must be at least {{ limit }} characters long",
+     *      maxMessage = "Wallet title cannot be longer than {{ limit }} characters"
+     * )
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=48, nullable=true)
+     * 
+     * // can be blank because we create the wallet before deriving the pubkey.
+     * 
+     * // TODO create constraint for key validation
+     * 
      */
     private $address;
 
@@ -41,16 +58,27 @@ class Wallet
 
     /**
      * @ORM\Column(type="smallint")
+     * 
+     * @Assert\NotBlank
+     * @Assert\PositiveOrZero
      */
     private $type;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="wallets")
+     * 
+     * @Assert\NotBlank
+     * @Assert\Type("App\Entity\User")
      */
     private $user;
 
     /**
      * @ORM\OneToMany(targetEntity=DispatchRecipient::class, mappedBy="wallet", orphanRemoval=true)
+     * 
+     * @Assert\All({
+     *     @Assert\NotBlank,
+     *     @Assert\Type("App\Entity\DispatchRecipient")
+     * })
      */
     private $dispatchRecipients;
 
